@@ -1,4 +1,30 @@
-app_user:
+api_users:
   path: /api/users
-  methods: POST|GET
+  methods: POST
   controller: App\Controller\UserController::create
+
+api_users_pick_all:
+  path: /api/users
+  methods: GET
+  controller: App\Controller\UserController::pickAll
+
+api_users_pick:
+  path: /api/users/{userID}
+  methods: GET
+  requirements: 
+    userID: '[0-9]+'
+  controller: App\Controller\UserController::pick
+
+api_users_update:
+  path: /api/users/{userID}
+  methods: PATCH|PUT
+  requirements:
+    userID: '[0-9]+'
+  controller: App\Controller\UserController::update
+
+api_users_delete:
+  path: /api/users/{userID}
+  methods: DELETE
+  requirements:
+    userID: '[0-9]+'
+  controller: App\Controller\UserController::delete
