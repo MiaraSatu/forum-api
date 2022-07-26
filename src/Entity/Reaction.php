@@ -22,6 +22,10 @@ class Reaction
     #[ORM\Column]
     private ?int $targetId = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reactions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +63,18 @@ class Reaction
     public function setTargetId(int $targetId): self
     {
         $this->targetId = $targetId;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
