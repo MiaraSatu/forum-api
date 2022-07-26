@@ -1,4 +1,4 @@
 app_user:
   path: /api/users
-  methods: GET
-  controller: App\Controller\UserController::index
+  methods: POST|GET
+  controller: App\Controller\UserController::create
