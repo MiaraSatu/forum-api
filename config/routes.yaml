@@ -1,4 +1,4 @@
-api_users:
+api_users_create:
   path: /api/users
   methods: POST
   controller: App\Controller\UsersController::create
@@ -28,3 +28,11 @@ api_users_delete:
   requirements:
     userID: '[0-9]+'
   controller: App\Controller\UsersController::delete
+
+
+api_posts_create:
+  path: /api/users/{userID}/posts
+  methods: POST
+  requirements: 
+    userID: '[0-9]+'
+  controller: App\Controller\PostsController::create
