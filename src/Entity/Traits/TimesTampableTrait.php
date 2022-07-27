@@ -2,6 +2,8 @@
 
 namespace App\Entity\Traits;
 
+use Doctrine\ORM\Mapping as ORM;
+
 trait TimesTampableTrait {
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
