@@ -12,7 +12,7 @@ use App\Service\SerializerService;
 use App\Repository\UserRepository;
 use App\Entity\User;
 
-class UserController extends AbstractController
+class UsersController extends AbstractController
 {
     private Serializer $serializer;
     private EntityManagerInterface $em;
