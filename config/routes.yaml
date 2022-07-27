@@ -36,3 +36,8 @@ api_posts_create:
   requirements: 
     userID: '[0-9]+'
   controller: App\Controller\PostsController::create
+
+api_posts_pick:
+  path: /api/posts
+  methods: GET
+  controller: App\Controller\PostsController::pickAll

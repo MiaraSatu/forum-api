@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Serializer;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\SerializerService;
 use App\Repository\UserRepository;
+use App\Repository\PostRepository;
 use App\Entity\Post;
 use App\Entity\User;
 
@@ -38,5 +39,12 @@ class PostsController extends AbstractController
         }
 
         return new JsonResponse(["message" => "Auteur non trouvé"], Response::HTTP_NOT_FOUND, []);
+    }
+
+    public function pickAll(PostRepository $postRepo): JsonResponse {
+        $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
+        $jsonPosts = $this->serializer->serialize($posts, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+
+        return new JsonResponse($jsonPosts, Response::HTTP_OK, [], 'true');
     }
 }
