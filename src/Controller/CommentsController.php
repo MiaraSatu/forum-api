@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CommentRepository;
 use App\Service\SerializerService;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
@@ -42,5 +43,12 @@ class CommentsController extends AbstractController
         }
 
         return new JsonResponse(['message' => 'Post non trouvé'], Response::HTTP_NOT_FOUND);
+    }
+
+    public function pickAll(CommentRepository $commentRepo) {
+        $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
+        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy']]);
+
+        return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
     }
 }
