@@ -55,3 +55,10 @@ api_posts_update:
   requirements:
     postID: '[0-9]+'
   controller: App\Controller\PostsController:update
+
+api_posts_delete:
+  path: /api/posts/{postID}
+  methods: DELETE
+  requirements: 
+    postID: '[0-9]+'
+  controller: App\Controller\PostsController::delete

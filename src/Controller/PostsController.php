@@ -66,6 +66,17 @@ class PostsController extends AbstractController
 
             return new JsonResponse($jsonPost, Response::HTTP_OK, [], true);
         }
-        return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND, []);
+        return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND);
+    }
+
+    public function delete(int $postID, PostRepository $postRepo): JsonResponse {
+        if($post = $postRepo->find($postID)) {
+            $this->em->remove($post);
+            $this->em->flush();
+
+            return new JsonResponse(['message'=>'Post éffacé avec success'], Response::HTTP_OK);
+        }
+
+        return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND);
     }
 }
