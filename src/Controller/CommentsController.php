@@ -34,7 +34,7 @@ class CommentsController extends AbstractController
                 $this->em->persist($comment);
                 // dd($comment);
                 $this->em->flush();
-                $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
+                $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
 
                 return new JsonResponse($jsonComment, Response::HTTP_CREATED, [], true);
             }
@@ -47,14 +47,14 @@ class CommentsController extends AbstractController
 
     public function pickAll(CommentRepository $commentRepo) {
         $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
+        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
 
         return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
     }
 
     public function pick(int $commentID, CommentRepository $commentRepo): JsonResponse {
         if($comment = $commentRepo->find($commentID)) {
-            $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
+            $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
 
             return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
         }
@@ -67,7 +67,7 @@ class CommentsController extends AbstractController
             $comment = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
             $oldComment->mergeWith($comment, ['content']);
             $this->em->flush();
-            $jsonComment = $this->serializer->serialize($oldComment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
+            $jsonComment = $this->serializer->serialize($oldComment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
 
             return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
         }
