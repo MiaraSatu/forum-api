@@ -48,3 +48,10 @@ api_posts_pick:
   requirements:
     postID: '[0-9]+'
   controller: App\Controller\PostsController::pick
+
+api_posts_update:
+  path: /api/posts/{postID}
+  methods: PATCH|PUT
+  requirements:
+    postID: '[0-9]+'
+  controller: App\Controller\PostsController:update
