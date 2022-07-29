@@ -88,3 +88,10 @@ api_comments_update:
   requirements:
     commentID: '[0-9]+'
   controller: App\Controller\CommentsController::update
+
+api_comments_delete:
+  path: /api/comments/{commentID}
+  methods: DELETE
+  requirements:
+    commentID: '[0-9]+'
+  controller: App\Controller\CommentsController::delete

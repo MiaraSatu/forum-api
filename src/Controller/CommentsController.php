@@ -74,4 +74,15 @@ class CommentsController extends AbstractController
 
         return new JsonResponse(['message' => 'Comment non trouvé'], Response::HTTP_NOT_FOUND);
     }
+
+    public function delete(int $commentID, CommentRepository $commentRepo): JsonResponse {
+        if($comment = $commentRepo->find($commentID)) {
+            $this->em->remove($comment);
+            $this->em->flush();
+
+            return new JsonResponse(['message' => 'Comment éffacé avec success!']);
+        }
+
+        return new JsonResponse(['message' => 'Comment non trouvé'], Response::HTTP_NOT_FOUND);
+    }
 }
