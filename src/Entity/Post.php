@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Traits\TimesTampableTrait;
+use App\Entity\Traits\MergableTrait;
 use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
@@ -14,6 +15,7 @@ use Doctrine\DBAL\Types\Types;
 class Post
 {
     use TimesTampableTrait;
+    use MergableTrait;
     
     #[ORM\Id]
     #[ORM\GeneratedValue]
