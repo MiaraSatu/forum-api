@@ -76,3 +76,8 @@ api_comments_pick_all:
   path: /api/comments
   methods: GET
   controller: App\Controller\CommentsController::pickAll
+
+api_comments_pick:
+  path: /api/comments/{commentID}
+  methods: GET
+  controller: App\Controller\CommentsController::pick

@@ -51,4 +51,14 @@ class CommentsController extends AbstractController
 
         return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
     }
+
+    public function pick(int $commentID, CommentRepository $commentRepo): JsonResponse {
+        if($comment = $commentRepo->find($commentID)) {
+            $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
+
+            return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
+        }
+
+        return new JsonResponse(['message'=>'Comment non trouvé'], Response::HTTP_NOT_FOUND);
+    }
 }
