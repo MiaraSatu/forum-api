@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,21 +29,21 @@ class UsersController extends AbstractController
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
         $this->em->persist($user);
         $this->em->flush();
-        $jsonUser = $this->serializer->serialize($user, 'json');
+        $jsonUser = $this->serializer->serialize($user, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
 
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
     public function pickAll(UserRepository $userRepo): JsonResponse {
         $users = $userRepo->findAll();
-        $usersList = $this->serializer->serialize($users, 'json');
+        $usersList = $this->serializer->serialize($users, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
 
         return new JsonResponse($usersList, Response::HTTP_OK, [], true);
     }
 
     public function pick(int $userID, UserRepository $userRepo): JsonResponse {
         if($user = $userRepo->find($userID)) {
-            $jsonUser = $this->serializer->serialize($user, 'json');
+            $jsonUser = $this->serializer->serialize($user, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
 
             return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
         }
@@ -58,7 +59,7 @@ class UsersController extends AbstractController
             if($email = $user->getEmail())
                 $oldUser->setEmail($email);
             $this->em->flush();
-            $jsonUser = $this->serializer->serialize($oldUser, 'json');
+            $jsonUser = $this->serializer->serialize($oldUser, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
 
             return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
         }
