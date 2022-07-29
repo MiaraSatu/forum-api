@@ -54,10 +54,7 @@ class UsersController extends AbstractController
     public function update(int $userID, Request $request, UserRepository $userRepo): JsonResponse {
         if($oldUser = $userRepo->find($userID)) {
             $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-            if($fullName = $user->getFullname())
-                $oldUser->setFullName($fullName);
-            if($email = $user->getEmail())
-                $oldUser->setEmail($email);
+            $oldUser->mergeWith($user, ['fullName', 'email']);
             $this->em->flush();
             $jsonUser = $this->serializer->serialize($oldUser, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
 
