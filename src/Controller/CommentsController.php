@@ -34,7 +34,7 @@ class CommentsController extends AbstractController
                 $this->em->persist($comment);
                 // dd($comment);
                 $this->em->flush();
-                $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy']]);
+                $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
 
                 return new JsonResponse($jsonComment, Response::HTTP_CREATED, [], true);
             }
@@ -47,7 +47,7 @@ class CommentsController extends AbstractController
 
     public function pickAll(CommentRepository $commentRepo) {
         $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy']]);
+        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts']]);
 
         return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
     }
