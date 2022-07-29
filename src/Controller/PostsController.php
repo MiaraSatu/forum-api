@@ -47,4 +47,13 @@ class PostsController extends AbstractController
 
         return new JsonResponse($jsonPosts, Response::HTTP_OK, [], 'true');
     }
+
+    public function pick(int $postID, PostRepository $postRepo): JsonResponse {
+        if($post = $postRepo->find($postID)) {
+            $jsonPost = $this->serializer->serialize($post, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+            return new JsonResponse($jsonPost, Response::HTTP_OK, [], true);
+        }
+        
+        return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND, []);
+    }
 }
