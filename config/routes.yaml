@@ -62,3 +62,12 @@ api_posts_delete:
   requirements: 
     postID: '[0-9]+'
   controller: App\Controller\PostsController::delete
+
+
+api_comments_create:
+  path: /api/posts/{postID}/users/{userID}/comments
+  methods: POST
+  requirements:
+    postID: '[0-9]+'
+    userID: '[0-9]+'
+  controller: App\Controller\CommentsController::create
