@@ -81,3 +81,10 @@ api_comments_pick:
   path: /api/comments/{commentID}
   methods: GET
   controller: App\Controller\CommentsController::pick
+
+api_comments_update:
+  path: /api/comments/{commentID}
+  methods: PATCH|PUT
+  requirements:
+    commentID: '[0-9]+'
+  controller: App\Controller\CommentsController::update
