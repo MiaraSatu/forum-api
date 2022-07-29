@@ -95,3 +95,11 @@ api_comments_delete:
   requirements:
     commentID: '[0-9]+'
   controller: App\Controller\CommentsController::delete
+
+api_comments_reply:
+  path: /api/comments/{commentID}/reply/users/{userID}
+  methods: POST
+  requirements:
+    commentID: '[0-9]+'
+    userID: '[0-9]+'
+  controller: App\Controller\CommentsController::reply

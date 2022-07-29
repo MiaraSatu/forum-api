@@ -85,4 +85,24 @@ class CommentsController extends AbstractController
 
         return new JsonResponse(['message' => 'Comment non trouvé'], Response::HTTP_NOT_FOUND);
     }
+
+    public function reply(int $commentID, int $userID, Request $request, CommentRepository $commentRepo, UserRepository $userRepo): JsonResponse {
+        if($parent = $commentRepo->find($commentID)) {
+            if($user = $userRepo->find($userID)) {
+                $response = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
+                $parent->addResponse($response);
+                $response->setPost($parent->getPost());
+                $response->setCommentedBy($user);
+                $this->em->persist($response);
+                $this->em->flush();
+                $jsonResponse = $this->serializer->serialize($response, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+
+                return new JsonResponse($jsonResponse, Response::HTTP_CREATED, [], true);
+            }
+
+            return new JsonResponse(['message' => 'User non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse(['message' => 'Comment non trouvé'], Response::HTTP_NOT_FOUND);
+    }
 }
