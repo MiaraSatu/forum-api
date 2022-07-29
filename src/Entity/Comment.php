@@ -2,18 +2,20 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\TimesTampableTrait;
+use App\Repository\CommentRepository;
+use App\Entity\Traits\MergableTrait;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
 class Comment
 {
     use TimesTampableTrait;
+    use MergableTrait;
     
     #[ORM\Id]
     #[ORM\GeneratedValue]
