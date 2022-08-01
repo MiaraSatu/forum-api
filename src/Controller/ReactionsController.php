@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReactionRepository;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Service\SerializerService;
 use App\Repository\UserRepository;
@@ -83,5 +84,36 @@ class ReactionsController extends AbstractController
 
         // si reaction non trouvé
         return new JsonResponse(['message' => 'Reaction non trouvé'], Response::HTTP_NOT_FOUND);
+    }
+
+    public function reactComment(int $commentID, int $userID, bool $isLike, CommentRepository $commentRepo, UserRepository $userRepo, ReactionRepository $reactionRepo) {
+        if($comment = $commentRepo->find($commentID)) {
+            if($user = $userRepo->find($userID)) {
+                // already exist
+                if($reaction = $reactionRepo->findOneBy(['targetType' => "comment", 'targetId' => $commentID, 'owner' => $user])) {
+                    if($reaction->isLike() != $isLike)
+                        $reaction->setIsLike($isLike);
+                }
+                else {
+                    $reaction = new Reaction();
+                    $reaction->setTargetType('comment');
+                    $reaction->setTargetId($commentID);
+                    // like for true and dislike for false
+                    $reaction->setIsLike($isLike);
+                    $reaction->setOwner($user);
+                    $this->em->persist($reaction);
+                }
+                $this->em->flush();
+                $jsonReaction = $this->serializer->serialize($reaction, 'json');
+
+                return new JsonResponse($jsonReaction, Response::HTTP_CREATED, [], true);
+            }
+
+            // user non trouvé
+            return new JsonResponse(['message' => "User non trouvé"], Response::HTTP_NOT_FOUND);
+        }
+
+        // comment non trouvé
+        return new JsonResponse(['message' => "Comment non trouvé"], Response::HTTP_NOT_FOUND);
     }
 }

@@ -135,3 +135,13 @@ api_reactions_update:
     reactionID: '[0-9]+'
     isLike: '(1|0)'
   controller: App\Controller\ReactionsController::update
+
+api_comment_reactions_create:
+  path: /api/comments/{commentID}/users/{userID}/reactions/{isLike}
+  methods: GET
+  defaults:
+    isLike: '1'
+  requirements:
+    commentID: '[0-9]+'
+    isLike: '(1|0)'
+  controller: App\Controller\ReactionsController::reactComment
