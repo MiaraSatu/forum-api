@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,11 +29,10 @@ class CommentsController extends AbstractController
             if($user = $userRepo->find($userID)) {
                 $comment = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
                 $comment->setCommentedBy($user);
-                $post->addComment($comment);
+                $comment->setPost($post);
                 $this->em->persist($comment);
-                // dd($comment);
                 $this->em->flush();
-                $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+                $jsonComment = $this->serializer->serialize($comment, 'json');
 
                 return new JsonResponse($jsonComment, Response::HTTP_CREATED, [], true);
             }
@@ -47,14 +45,14 @@ class CommentsController extends AbstractController
 
     public function pickAll(CommentRepository $commentRepo) {
         $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonComments = $this->serializer->serialize($comments, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+        $jsonComments = $this->serializer->serialize($comments, 'json');
 
         return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
     }
 
     public function pick(int $commentID, CommentRepository $commentRepo): JsonResponse {
         if($comment = $commentRepo->find($commentID)) {
-            $jsonComment = $this->serializer->serialize($comment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+            $jsonComment = $this->serializer->serialize($comment, 'json');
 
             return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
         }
@@ -67,7 +65,7 @@ class CommentsController extends AbstractController
             $comment = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
             $oldComment->mergeWith($comment, ['content']);
             $this->em->flush();
-            $jsonComment = $this->serializer->serialize($oldComment, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+            $jsonComment = $this->serializer->serialize($oldComment, 'json');
 
             return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
         }
@@ -90,12 +88,12 @@ class CommentsController extends AbstractController
         if($parent = $commentRepo->find($commentID)) {
             if($user = $userRepo->find($userID)) {
                 $response = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
-                $parent->addResponse($response);
+                $response->setParent($parent);
                 $response->setPost($parent->getPost());
                 $response->setCommentedBy($user);
                 $this->em->persist($response);
                 $this->em->flush();
-                $jsonResponse = $this->serializer->serialize($response, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['comments', 'postedBy', 'posts', 'responses']]);
+                $jsonResponse = $this->serializer->serialize($response, 'json');
 
                 return new JsonResponse($jsonResponse, Response::HTTP_CREATED, [], true);
             }
