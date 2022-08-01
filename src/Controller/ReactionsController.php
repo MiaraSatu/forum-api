@@ -23,16 +23,22 @@ class ReactionsController extends AbstractController
         $this->em = $em;
     }
 
-    public function reactPost(int $postID, int $userID, bool $isLike, PostRepository $postRepo, UserRepository $userRepo): JsonResponse {
+    public function reactPost(int $postID, int $userID, bool $isLike, PostRepository $postRepo, UserRepository $userRepo, ReactionRepository $reactionRepo): JsonResponse{
         if($post = $postRepo->find($postID)) {
             if($user = $userRepo->find($userID)) {
-                $reaction = new Reaction;
-                $reaction->setTargetType("post");
-                $reaction->setTargetId($postID);
-                // like for true and dislike for false
-                $reaction->setIsLike($isLike);
-                $reaction->setOwner($user);
-                $this->em->persist($reaction);
+                if($reaction = $reactionRepo->findOneBy(['targetType' => 'post', 'targetId' => $postID, 'owner' => $user])) {
+                    if($reaction->isLike() !== $isLike)
+                        $reaction->setIsLike($isLike);
+                }
+                else {
+                    $reaction = new Reaction;
+                    $reaction->setTargetType("post");
+                    $reaction->setTargetId($postID);
+                    // like for true and dislike for false
+                    $reaction->setIsLike($isLike);
+                    $reaction->setOwner($user);
+                    $this->em->persist($reaction);
+                }
                 $this->em->flush();
 
                 $jsonReaction = $this->serializer->serialize($reaction, 'json');
