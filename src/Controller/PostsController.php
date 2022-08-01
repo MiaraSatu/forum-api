@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,14 +42,14 @@ class PostsController extends AbstractController
 
     public function pickAll(PostRepository $postRepo): JsonResponse {
         $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonPosts = $this->serializer->serialize($posts, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+        $jsonPosts = $this->serializer->serialize($posts, 'json');
 
         return new JsonResponse($jsonPosts, Response::HTTP_OK, [], 'true');
     }
 
     public function pick(int $postID, PostRepository $postRepo): JsonResponse {
         if($post = $postRepo->find($postID)) {
-            $jsonPost = $this->serializer->serialize($post, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+            $jsonPost = $this->serializer->serialize($post, 'json');
             return new JsonResponse($jsonPost, Response::HTTP_OK, [], true);
         }
         
@@ -62,7 +61,7 @@ class PostsController extends AbstractController
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
             $oldPost->mergeWith($post, ['subject', 'title', 'content']);
             $this->em->flush();
-            $jsonPost = $this->serializer->serialize($oldPost, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+            $jsonPost = $this->serializer->serialize($oldPost, 'json');
 
             return new JsonResponse($jsonPost, Response::HTTP_OK, [], true);
         }
