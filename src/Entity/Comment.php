@@ -24,6 +24,7 @@ class Comment
     private ?string $content = null;
 
     #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(onDelete: "cascade")]
     private ?self $parent = null;
 
     #[ORM\ManyToOne]
