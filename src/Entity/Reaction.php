@@ -31,7 +31,8 @@ class Reaction
         return $this->id;
     }
 
-    public function isIsLike(): ?bool
+    // public function isIsLike(): ?bool
+    public function isLike(): ?bool
     {
         return $this->isLike;
     }

@@ -64,4 +64,18 @@ class ReactionsController extends AbstractController
         // reaction non trouvé
         return new JsonResponse(['message' => "Reaction non trouvé"], Response::HTTP_NOT_FOUND);
     }
+
+    public function update(int $reactionID, bool $isLike, ReactionRepository $reactionRepo): JsonResponse {
+        if($reaction = $reactionRepo->find($reactionID)) {
+            if($reaction->isLike() != $isLike) {
+                $reaction->setIsLike($isLike);
+            }
+            $jsonReaction = $this->serializer->serialize($reaction, 'json');
+
+            return new JsonResponse($jsonReaction, Response::HTTP_OK, [], true);
+        }
+
+        // si reaction non trouvé
+        return new JsonResponse(['message' => 'Reaction non trouvé'], Response::HTTP_NOT_FOUND);
+    }
 }

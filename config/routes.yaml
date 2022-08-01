@@ -127,3 +127,11 @@ api_reactions_delete:
   requirements:
     reactionID: '[0-9]+'
   controller: App\Controller\ReactionsController::delete
+
+api_reactions_update:
+  path: /api/reactions/{reactionID}/{isLike}
+  methods: GET
+  requirements:
+    reactionID: '[0-9]+'
+    isLike: '(1|0)'
+  controller: App\Controller\ReactionsController::update
