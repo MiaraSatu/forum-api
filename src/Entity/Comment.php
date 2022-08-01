@@ -26,6 +26,10 @@ class Comment
     #[ORM\ManyToOne(targetEntity: self::class)]
     private ?self $parent = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $CommentedBy = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +55,18 @@ class Comment
     public function setParent(?self $parent): self
     {
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    public function getCommentedBy(): ?User
+    {
+        return $this->CommentedBy;
+    }
+
+    public function setCommentedBy(?User $CommentedBy): self
+    {
+        $this->CommentedBy = $CommentedBy;
 
         return $this;
     }
