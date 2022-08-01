@@ -30,6 +30,10 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?User $CommentedBy = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Post $post = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -67,6 +71,18 @@ class Comment
     public function setCommentedBy(?User $CommentedBy): self
     {
         $this->CommentedBy = $CommentedBy;
+
+        return $this;
+    }
+
+    public function getPost(): ?Post
+    {
+        return $this->post;
+    }
+
+    public function setPost(?Post $post): self
+    {
+        $this->post = $post;
 
         return $this;
     }
