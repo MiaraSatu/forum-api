@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Serializer;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ReactionRepository;
 use App\Repository\PostRepository;
 use App\Service\SerializerService;
 use App\Repository\UserRepository;
@@ -42,5 +43,25 @@ class ReactionsController extends AbstractController
         }
 
         return new JsonResponse(['message' => "Post non trouvé"], Response::HTTP_NOT_FOUND);
+    }
+
+    public function pickAll(ReactionRepository $reactionRepo): JsonResponse {
+        $reactions = $reactionRepo->findAll();
+        $jsonReactions = $this->serializer->serialize($reactions, 'json');
+
+        return new JsonResponse($jsonReactions, Response::HTTP_OK, [], true);
+    }
+
+    public function delete(int $reactionID, ReactionRepository $reactionRepo): JsonResponse {
+        if($reaction = $reactionRepo->find($reactionID)) {
+            $this->em->remove($reaction);
+            $this->em->flush();
+
+            // reaction supprimé
+            return new JsonResponse(['message' => "Reaction supprimé avec success"], Response::HTTP_OK);
+        }
+
+        // reaction non trouvé
+        return new JsonResponse(['message' => "Reaction non trouvé"], Response::HTTP_NOT_FOUND);
     }
 }

@@ -115,3 +115,15 @@ api_post_reactions_create:
     userID: '[0-9]+'
     isLike: '(1|0)' #1 for like, 0 for dislike
   controller: App\Controller\ReactionsController::reactPost
+
+api_reactions_pick_all:
+  path: /api/reactions
+  methods: GET
+  controller: App\Controller\ReactionsController::pickAll
+
+api_reactions_delete:
+  path: /api/reactions/{reactionID}
+  methods: DELETE
+  requirements:
+    reactionID: '[0-9]+'
+  controller: App\Controller\ReactionsController::delete
