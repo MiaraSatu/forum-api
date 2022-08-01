@@ -30,10 +30,10 @@ class PostsController extends AbstractController
         // si l'auteur du post exist dans la base
         if($targetUser = $userRepo->find($userID)) {
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
-            $targetUser->addPost($post);
+            $post->setPostedBy($targetUser);
             $this->em->persist($post);
             $this->em->flush();
-            $jsonPost = $this->serializer->serialize($post, 'json', [AbstractNormalizer::IGNORED_ATTRIBUTES => ['posts']]);
+            $jsonPost = $this->serializer->serialize($post, 'json');
 
             return new JsonResponse($jsonPost, Response::HTTP_CREATED, [], true);
         }
