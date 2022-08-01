@@ -6,6 +6,7 @@ use App\Repository\ReactionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ReactionRepository::class)]
+#[ORM\UniqueConstraint(columns: ["target_type", "target_id", "owner_id"])]
 class Reaction
 {
     #[ORM\Id]
