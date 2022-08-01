@@ -27,11 +27,11 @@ class Comment
     private ?self $parent = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "cascade")]
     private ?User $CommentedBy = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "cascade")]
     private ?Post $post = null;
 
     public function getId(): ?int
