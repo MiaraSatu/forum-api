@@ -103,3 +103,15 @@ api_comments_reply:
     commentID: '[0-9]+'
     userID: '[0-9]+'
   controller: App\Controller\CommentsController::reply
+
+
+api_post_reactions_create:
+  path: /api/posts/{postID}/users/{userID}/reactions/{isLike}
+  methods: GET
+  defaults:
+    isLike: '1'
+  requirements:
+    postID: '[0-9]+'
+    userID: '[0-9]+'
+    isLike: '(1|0)' #1 for like, 0 for dislike
+  controller: App\Controller\ReactionsController::reactPost
