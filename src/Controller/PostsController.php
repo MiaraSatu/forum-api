@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,10 +26,16 @@ class PostsController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(int $userID, Request $request, UserRepository $userRepo): JsonResponse {
+    public function create(int $userID, Request $request, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
         // si l'auteur du post exist dans la base
         if($targetUser = $userRepo->find($userID)) {
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
+            // cheking validation
+            $errors = $validator->validate($post);
+            if($errors->count() > 0)
+                return new JsonResponse($this->serializer->serialize(compact('errors'), 'json'), Response::HTTP_BAD_REQUEST, [], true);
+
+            // si pas d'erreur
             $post->setPostedBy($targetUser);
             $this->em->persist($post);
             $this->em->flush();

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Traits\TimesTampableTrait;
 use App\Entity\Traits\MergableTrait;
 use App\Repository\PostRepository;
@@ -24,9 +25,18 @@ class Post
     private ?string $subject = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 3,
+        max: 255
+    )]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 10
+    )]
     private ?string $content = null;
 
     #[ORM\ManyToOne]
