@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Traits\TimesTampableTrait;
 use App\Repository\CommentRepository;
 use App\Entity\Traits\MergableTrait;
@@ -21,6 +22,7 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private ?string $content = null;
 
     #[ORM\ManyToOne(targetEntity: self::class)]

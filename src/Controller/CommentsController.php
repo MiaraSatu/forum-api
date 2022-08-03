@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,10 +25,15 @@ class CommentsController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(int $postID, int $userID, Request $request, PostRepository $postRepo, UserRepository $userRepo): JsonResponse {
+    public function create(int $postID, int $userID, Request $request, PostRepository $postRepo, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
         if($post = $postRepo->find($postID)) {
             if($user = $userRepo->find($userID)) {
                 $comment = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
+                // checking validation
+                $errors = $validator->validate($comment);
+                if($errors->count() > 0)
+                    return new JsonResponse($this->serializer->serialize(compact('errors'), 'json'), Response::HTTP_BAD_REQUEST, [], true);
+
                 $comment->setCommentedBy($user);
                 $comment->setPost($post);
                 $this->em->persist($comment);
