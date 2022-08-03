@@ -154,3 +154,12 @@ api_reactions_pick:
     targetType: '(post|comment)'
     targetID: '[0-9]+'
   controller: App\Controller\ReactionsController::pick
+
+# compter les likes et les dislikes d'un target
+api_reactions_count:
+  path: /api/{targetType}/{targetID}/reactions/count
+  methods: GET
+  requirements:
+    targetType: '(post|comment)'
+    targetID: '[0-9]+'
+  controller: App\Controller\ReactionsController::count

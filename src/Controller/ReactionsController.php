@@ -132,4 +132,22 @@ class ReactionsController extends AbstractController
         // target non trouvé
         return new JsonResponse(['message' => ucfirst($targetType)." non trouvé"], Response::HTTP_NOT_FOUND);
     }
+
+    public function count(string $targetType, int $targetID, ReactionRepository $reactionRepo): JsonResponse {
+        // ce sera App\Entity\Post or App\Entity\Comment
+        $targetEntity = '\App\\Entity\\'.ucfirst($targetType);
+        // recupérer le repository à partir le l'Entity Manager et le Target Entity
+        $targetRepo = $this->em->getRepository($targetEntity);
+        if($target = $targetRepo->find($targetID)) {
+            $reactions = $reactionRepo->count(['targetType' => $targetType, 'targetId' => $targetID]);
+            $likes = $reactionRepo->count(['targetType' => $targetType, 'targetId' => $targetID, 'isLike' => true]);
+            $dislikes = $reactionRepo->count(['targetType' => $targetType, 'targetId' => $targetID, 'isLike' => false]);
+            $jsonResult = ['likes' => $likes, 'dislikes' => $dislikes];
+
+            return new JsonResponse($jsonResult, Response::HTTP_OK, []);
+        }
+
+        // target non trouvé
+        return new JsonResponse(['message' => ucfirst($targetType)." non trouvé"], Response::HTTP_NOT_FOUND);
+    }
 }
