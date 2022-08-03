@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,14 +25,18 @@ class UsersController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(Request $request, ValidatorInterface $validator): JsonResponse
+    public function create(Request $request, ValidatorInterface $validator, UserPasswordHasherInterface $hasher): JsonResponse
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
         $errors = $validator->validate($user);
         if($errors->count() > 0)
             return new JsonResponse($this->serializer->serialize(['errors'=>$errors], 'json'), Response::HTTP_BAD_REQUEST, [], true);
 
+        if(null === $clearPassword = $request->toArray()['clearPassword']) 
+            return new JsonResponse(['message'=>"Mot de passe ne doit pas etre vide"], Response::HTTP_BAD_REQUEST);
+
         // si pas d'erreur
+        $user->setPassword($hasher->hashPassword($user, $clearPassword));
         $this->em->persist($user);
         $this->em->flush();
         $jsonUser = $this->serializer->serialize($user, 'json');
