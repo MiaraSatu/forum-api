@@ -145,3 +145,12 @@ api_comment_reactions_create:
     commentID: '[0-9]+'
     isLike: '(1|0)'
   controller: App\Controller\ReactionsController::reactComment
+
+# recupérer les reactions d'un post
+api_reactions_pick:
+  path: /api/{targetType}/{targetID}/reactions
+  methods: GET
+  requirements:
+    targetType: '(post|comment)'
+    targetID: '[0-9]+'
+  controller: App\Controller\ReactionsController::pick

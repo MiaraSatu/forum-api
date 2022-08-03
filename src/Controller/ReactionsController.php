@@ -116,4 +116,20 @@ class ReactionsController extends AbstractController
         // comment non trouvé
         return new JsonResponse(['message' => "Comment non trouvé"], Response::HTTP_NOT_FOUND);
     }
+
+    public function pick(string $targetType, int $targetID, ReactionRepository $reactionRepo): JsonResponse {
+        // ce sera App\Entity\Post or App\Entity\Comment
+        $targetEntity = '\App\\Entity\\'.ucfirst($targetType);
+        // recupérer le repository à partir le l'Entity Manager et le Target Entity
+        $targetRepo = $this->em->getRepository($targetEntity);
+        if($target = $targetRepo->find($targetID)) {
+            $reactions = $reactionRepo->findBy(['targetType' => $targetType, 'targetId' => $targetID]);
+            $jsonReactions = $this->serializer->serialize($reactions, 'json');
+
+            return new JsonResponse($jsonReactions, Response::HTTP_OK, [], true);
+        }
+
+        // target non trouvé
+        return new JsonResponse(['message' => ucfirst($targetType)." non trouvé"], Response::HTTP_NOT_FOUND);
+    }
 }
