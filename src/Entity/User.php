@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Traits\MergableTrait;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Traits\MergableTrait;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -17,9 +18,12 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $fullName = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: 'the email {{ value }} is not a valid email')]
     private ?string $email = null;
 
     public function getId(): ?int

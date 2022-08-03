@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,14 @@ class UsersController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(Request $request): JsonResponse
+    public function create(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+        $errors = $validator->validate($user);
+        if($errors->count() > 0)
+            return new JsonResponse($this->serializer->serialize(['errors'=>$errors], 'json'), Response::HTTP_BAD_REQUEST, [], true);
+
+        // si pas d'erreur
         $this->em->persist($user);
         $this->em->flush();
         $jsonUser = $this->serializer->serialize($user, 'json');
