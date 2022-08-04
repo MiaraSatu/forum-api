@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Contracts\Cache\ItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\SerializerService;
 use App\Repository\UserRepository;
@@ -48,11 +50,19 @@ class PostsController extends AbstractController
         return new JsonResponse(["message" => "Auteur non trouvé"], Response::HTTP_NOT_FOUND, []);
     }
 
-    public function pickAll(Request $request, PostRepository $postRepo, PaginationService $paginationService): JsonResponse {
+    public function pickAll(Request $request, PostRepository $postRepo, PaginationService $paginationService, TagAwareCacheInterface $cachePool): JsonResponse {
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 3);
-        $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
-        $paginator = $paginationService->getPaginator($request, $query, $page, $limit);
+        // mise en cache
+        $idCache = "pickAllPosts-". $page ."-". $limit;
+        $paginator = $cachePool->get($idCache, function(ItemInterface $item) use ($postRepo, $request, $paginationService, $page, $limit){
+            $item->tag("postCache");
+            $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
+            return $paginationService->getPaginator($request, $query, $page, $limit);
+        });
+
+        // $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
+        // $paginator = $paginationService->getPaginator($request, $query, $page, $limit);
         // $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
         // $jsonPosts = $this->serializer->serialize($posts, 'json');
         $jsonPaginator = $this->serializer->serialize($paginator, 'json');
