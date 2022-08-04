@@ -31,10 +31,8 @@ api_users_delete:
 
 
 api_posts_create:
-  path: /api/users/{userID}/posts
+  path: /api/posts
   methods: POST
-  requirements: 
-    userID: '[0-9]+'
   controller: App\Controller\PostsController::create
 
 api_posts_pick_all:

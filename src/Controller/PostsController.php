@@ -26,9 +26,9 @@ class PostsController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(int $userID, Request $request, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
+    public function create(Request $request, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
         // si l'auteur du post exist dans la base
-        if($targetUser = $userRepo->find($userID)) {
+        if($targetUser = $this->getUser()) {
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
             // cheking validation
             $errors = $validator->validate($post);
