@@ -13,6 +13,7 @@ use App\Repository\CommentRepository;
 use App\Service\SerializerService;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
+use App\Service\PaginationService;
 use App\Entity\Comment;
 
 class CommentsController extends AbstractController
@@ -49,11 +50,17 @@ class CommentsController extends AbstractController
         return new JsonResponse(['message' => 'Post non trouvé'], Response::HTTP_NOT_FOUND);
     }
 
-    public function pickAll(CommentRepository $commentRepo) {
-        $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonComments = $this->serializer->serialize($comments, 'json');
+    public function pickAll(Request $request, CommentRepository $commentRepo, PaginationService $paginationService) {
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
 
-        return new JsonResponse($jsonComments, Response::HTTP_OK, [], true);
+        $query = $commentRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
+        $paginator = $paginationService->getPaginator($request, $query, $page, $limit);
+        // $comments = $commentRepo->findBy([], ['createdAt' => 'DESC']);
+        // $jsonComments = $this->serializer->serialize($comments, 'json');
+        $jsonPaginator = $this->serializer->serialize($paginator, 'json');
+
+        return new JsonResponse($jsonPaginator, Response::HTTP_OK, [], true);
     }
 
     public function pick(int $commentID, CommentRepository $commentRepo): JsonResponse {
