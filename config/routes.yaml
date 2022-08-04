@@ -1,5 +1,5 @@
-api_users_create:
-  path: /api/users
+api_registration:
+  path: /api/registration
   methods: POST
   controller: App\Controller\UsersController::create
 
