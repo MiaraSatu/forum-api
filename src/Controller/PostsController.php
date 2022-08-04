@@ -29,7 +29,7 @@ class PostsController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(Request $request, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
+    public function create(Request $request, UserRepository $userRepo, ValidatorInterface $validator, TagAwareCacheInterface $cachePool): JsonResponse {
         // si l'auteur du post exist dans la base
         if($targetUser = $this->getUser()) {
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
@@ -40,6 +40,7 @@ class PostsController extends AbstractController
 
             // si pas d'erreur
             $post->setPostedBy($targetUser);
+            $cachePool->invalidateTags(['postCache']);
             $this->em->persist($post);
             $this->em->flush();
             $jsonPost = $this->serializer->serialize($post, 'json');
@@ -78,10 +79,11 @@ class PostsController extends AbstractController
         return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND, []);
     }
 
-    public function update(int $postID, Request $request, PostRepository $postRepo): JsonResponse {
+    public function update(int $postID, Request $request, PostRepository $postRepo, TagAwareCacheInterface $cachePool): JsonResponse {
         if($oldPost = $postRepo->find($postID)) {
             $post = $this->serializer->deserialize($request->getContent(), Post::class, 'json');
             $oldPost->mergeWith($post, ['subject', 'title', 'content']);
+            $cachePool->invalidateTags('postCache');
             $this->em->flush();
             $jsonPost = $this->serializer->serialize($oldPost, 'json');
 
@@ -90,8 +92,9 @@ class PostsController extends AbstractController
         return new JsonResponse(['message'=>'Post non trouvé'], Response::HTTP_NOT_FOUND);
     }
 
-    public function delete(int $postID, PostRepository $postRepo): JsonResponse {
+    public function delete(int $postID, PostRepository $postRepo, TagAwareCacheInterface $cachePool): JsonResponse {
         if($post = $postRepo->find($postID)) {
+            $cachePool->invalidateTags('postCache');
             $this->em->remove($post);
             $this->em->flush();
 
