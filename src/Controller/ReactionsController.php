@@ -86,9 +86,9 @@ class ReactionsController extends AbstractController
         return new JsonResponse(['message' => 'Reaction non trouvé'], Response::HTTP_NOT_FOUND);
     }
 
-    public function reactComment(int $commentID, int $userID, bool $isLike, CommentRepository $commentRepo, UserRepository $userRepo, ReactionRepository $reactionRepo) {
+    public function reactComment(int $commentID, bool $isLike, CommentRepository $commentRepo, UserRepository $userRepo, ReactionRepository $reactionRepo) {
         if($comment = $commentRepo->find($commentID)) {
-            if($user = $userRepo->find($userID)) {
+            if($user = $this->getUser()) {
                 // already exist
                 if($reaction = $reactionRepo->findOneBy(['targetType' => "comment", 'targetId' => $commentID, 'owner' => $user])) {
                     if($reaction->isLike() != $isLike)

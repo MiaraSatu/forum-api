@@ -132,7 +132,7 @@ api_reactions_update:
   controller: App\Controller\ReactionsController::update
 
 api_comment_reactions_create:
-  path: /api/comments/{commentID}/users/{userID}/reactions/{isLike}
+  path: /api/comments/{commentID}/reactions/{isLike}
   methods: GET
   defaults:
     isLike: '1'
