@@ -25,9 +25,9 @@ class CommentsController extends AbstractController
         $this->em = $em;
     }
 
-    public function create(int $postID, int $userID, Request $request, PostRepository $postRepo, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
+    public function create(int $postID, Request $request, PostRepository $postRepo, UserRepository $userRepo, ValidatorInterface $validator): JsonResponse {
         if($post = $postRepo->find($postID)) {
-            if($user = $userRepo->find($userID)) {
+            if($user = $this->getUser()) {
                 $comment = $this->serializer->deserialize($request->getContent(), Comment::class, 'json');
                 // checking validation
                 $errors = $validator->validate($comment);

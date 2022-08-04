@@ -63,11 +63,10 @@ api_posts_delete:
 
 
 api_comments_create:
-  path: /api/posts/{postID}/users/{userID}/comments
+  path: /api/posts/{postID}/comments
   methods: POST
   requirements:
     postID: '[0-9]+'
-    userID: '[0-9]+'
   controller: App\Controller\CommentsController::create
 
 api_comments_pick_all:
