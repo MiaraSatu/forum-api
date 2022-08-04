@@ -163,3 +163,6 @@ api_reactions_count:
     targetType: '(post|comment)'
     targetID: '[0-9]+'
   controller: App\Controller\ReactionsController::count
+
+api_login_check:
+  path: /api/login_check
