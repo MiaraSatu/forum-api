@@ -24,9 +24,9 @@ class ReactionsController extends AbstractController
         $this->em = $em;
     }
 
-    public function reactPost(int $postID, int $userID, bool $isLike, PostRepository $postRepo, UserRepository $userRepo, ReactionRepository $reactionRepo): JsonResponse{
+    public function reactPost(int $postID, bool $isLike, PostRepository $postRepo, UserRepository $userRepo, ReactionRepository $reactionRepo): JsonResponse{
         if($post = $postRepo->find($postID)) {
-            if($user = $userRepo->find($userID)) {
+            if($user = $this->getUser()) {
                 if($reaction = $reactionRepo->findOneBy(['targetType' => 'post', 'targetId' => $postID, 'owner' => $user])) {
                     if($reaction->isLike() !== $isLike)
                         $reaction->setIsLike($isLike);
