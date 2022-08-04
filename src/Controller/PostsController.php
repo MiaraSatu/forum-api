@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Service\SerializerService;
 use App\Repository\UserRepository;
 use App\Repository\PostRepository;
+use App\Service\PaginationService;
 use App\Entity\Post;
 use App\Entity\User;
 
@@ -47,11 +48,16 @@ class PostsController extends AbstractController
         return new JsonResponse(["message" => "Auteur non trouvé"], Response::HTTP_NOT_FOUND, []);
     }
 
-    public function pickAll(PostRepository $postRepo): JsonResponse {
-        $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
-        $jsonPosts = $this->serializer->serialize($posts, 'json');
+    public function pickAll(Request $request, PostRepository $postRepo, PaginationService $paginationService): JsonResponse {
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
+        $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
+        $paginator = $paginationService->getPaginator($request, $query, $page, $limit);
+        // $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
+        // $jsonPosts = $this->serializer->serialize($posts, 'json');
+        $jsonPaginator = $this->serializer->serialize($paginator, 'json');
 
-        return new JsonResponse($jsonPosts, Response::HTTP_OK, [], 'true');
+        return new JsonResponse($jsonPaginator, Response::HTTP_OK, [], 'true');
     }
 
     public function pick(int $postID, PostRepository $postRepo): JsonResponse {
