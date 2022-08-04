@@ -23,10 +23,8 @@ api_users_update:
   controller: App\Controller\UsersController::update
 
 api_users_delete:
-  path: /api/users/{userID}
+  path: /api/users
   methods: DELETE
-  requirements:
-    userID: '[0-9]+'
   controller: App\Controller\UsersController::delete
 
 

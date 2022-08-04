@@ -74,8 +74,8 @@ class UsersController extends AbstractController
         return new JsonResponse(['message' => "User non trouvé"], Response::HTTP_NOT_FOUND);
     }
 
-    public function delete(int $userID, UserRepository $userRepo): JsonResponse {
-        if($user = $userRepo->find($userID)) {
+    public function delete(UserRepository $userRepo): JsonResponse {
+        if($user = $this->getUser()) {
             $this->em->remove($user);
             $this->em->flush();
             return new JsonResponse(["message" => "User supprimé avec success"], Response::HTTP_OK);
