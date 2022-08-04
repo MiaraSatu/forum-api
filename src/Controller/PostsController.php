@@ -55,19 +55,18 @@ class PostsController extends AbstractController
         $limit = $request->get('limit', 3);
         // mise en cache
         $idCache = "pickAllPosts-". $page ."-". $limit;
-        $paginator = $cachePool->get($idCache, function(ItemInterface $item) use ($postRepo, $request, $paginationService, $page, $limit){
+        $jsonPaginator = $cachePool->get($idCache, function(ItemInterface $item) use ($postRepo, $request, $paginationService, $page, $limit){
             $item->tag("postCache");
             $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
-            return $paginationService->getPaginator($request, $query, $page, $limit);
+            return $this->serializer->serialize($paginationService->getPaginator($request, $query, $page, $limit), 'json');
         });
 
         // $query = $postRepo->getQueryBuilder([], [], ['createdAt'=>'DESC']);
         // $paginator = $paginationService->getPaginator($request, $query, $page, $limit);
         // $posts = $postRepo->findBy([], ['createdAt' => 'DESC']);
         // $jsonPosts = $this->serializer->serialize($posts, 'json');
-        $jsonPaginator = $this->serializer->serialize($paginator, 'json');
 
-        return new JsonResponse($jsonPaginator, Response::HTTP_OK, [], 'true');
+        return new JsonResponse($jsonPaginator, Response::HTTP_OK, [], true);
     }
 
     public function pick(int $postID, PostRepository $postRepo): JsonResponse {
