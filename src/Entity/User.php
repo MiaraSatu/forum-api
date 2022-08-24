@@ -21,6 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Assert\Length(min: 3)]
     private ?string $fullName = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -36,6 +37,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[Assert\NotBlank]
+    #[Assert\Length(min:5)]
+    private ?string $clearPassword = null;
 
     public function getId(): ?int
     {
@@ -138,5 +143,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getClearPassword(): ?string {
+        return $this->clearPassword;
+    }
+
+    public function setClearPassword(?string $clearPassword): self {
+        $this->clearPassword = $clearPassword;
+        return $this;
     }
 }
